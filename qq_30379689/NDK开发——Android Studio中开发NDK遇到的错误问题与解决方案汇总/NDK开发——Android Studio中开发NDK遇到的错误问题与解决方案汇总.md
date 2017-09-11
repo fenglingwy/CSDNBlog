@@ -29,3 +29,32 @@ sourceSets.main {
 }
 ```
 
+##错误三
+
+在运行FFmpeg项目的时候，会出现以下错误
+
+```
+Error:(18) undefined reference to 'avcodec_register_all()'
+```
+
+解决方案：
+
+这是由于Google留下的坑，正确写法如下
+
+```
+extern "C" {
+#include "libavcodec/avcodec.h"
+}
+
+extern "C"
+JNIEXPORT void JNICALL
+Java_com_handsome_ndkffmpeg_FFmpegUtils_video2Yua(JNIEnv *env, jclass jclazz, jstring video_path_,
+                                                  jstring yuv_path_) {
+    const char *video_path = env->GetStringUTFChars(video_path_, 0);
+    const char *yuv_path = env->GetStringUTFChars(yuv_path_, 0);
+
+    //1、注册所有组件
+    avcodec_register_all();
+
+}
+```

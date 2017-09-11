@@ -356,13 +356,48 @@ ClassLoader是用来动态加载class文件到内存中
 
 * App ClassLoader（应用类加载器或系统加载器）：这个加载器使用java实现，使用广泛，负责加载classPath中指定的类。具体的使用场合，在加载classPath中指定的而扩展类加载器没有加载的类，若扩展类加载器加载了classPath中的类，则系统类加载器则没有机会加载。用户定义的类一般都是系统类加载器加载的。可以通过：ClassLoader.getSystemClassLoader()获得
 * Extension ClassLoader（扩展类加载器）：它负责加载Java的标准扩展，一般使用Java实现的，负责加载jre/lib/ext中的类。和普通的类加载器一样。可以通过：ClassLoader.getSystemClassLoader().getParent()获得
-* BootStrap ClassLoader（引导类加载器）：它负责加载jdk中的系统类，是用C语言实现的。对于java程序无法获得它，像上文中获得扩展类加载器的父类加载器是null。像String，Integer，Double类都是由引导类加载器加载的
+* BootStrap ClassLoader（引导类加载器）：纯C++实现的加载器，没有对应的Java类，它负责加载jdk中jre/lib目录下的系统核心库。对于java程序无法获得它，像上文中获得扩展类加载器的父类加载器是null。像String，Integer，Double类都是由引导类加载器加载的
 
-3、双亲委托模型
+3、双亲委托模型（父委托加载机制）
 
-当加载一个类时，首先把机会让给父类，先让父类加载，若是父类中不能加载，才会自己再加载（这是孝顺型的，先想到父类，但是他们不是通过继承来实现的）
+当加载一个类时，首先会判断当前类是否已经被加载，如果被加载直接返回当前类加载器，如果没有被加载，则把机会让给父类，先让父类加载，若是父类中不能加载，则会去找到Bootstrap加载器，如果Bootstrap加载器加载失败，则会退回上层，自己通过findClass自己去加载对应的路径（这是孝顺型的，先想到父类，但是他们不是通过继承来实现的）
 
 ![这里写图片描述](http://img.blog.csdn.net/20170811212257353?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvcXFfMzAzNzk2ODk=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast)
+
+具体实现代码在ClassLoader类中的loadClass方法中，API19和API24加载过程有少许区别（以下是API24的源码），但大部分是一致的，下面执行的逻辑与我们上面所说的一致
+
+```
+protected Class<?> loadClass(String name, boolean resolve)
+    throws ClassNotFoundException
+{
+    //首先会判断当前类是否已经被加载
+    Class c = findLoadedClass(name);
+    if (c == null) {
+        long t0 = System.nanoTime();
+        try {
+            if (parent != null) {
+            	//把机会让给父类，先让父类加载
+                c = parent.loadClass(name, false);
+            } else {
+            	//找Bootstrap加载器，如果加载失败，则c == null
+                c = findBootstrapClassOrNull(name);
+            }
+        } catch (ClassNotFoundException e) {
+        }
+
+        if (c == null) {
+            long t1 = System.nanoTime();
+            //如果加载成功，则调用findClass以查找类
+            c = findClass(name);
+        }
+    }
+    return c;
+}
+```
+
+优点：
+
+* 父委托机制会去加载系统自带的class，而不会去加载我们自定义的高仿的系统class（比如ArrayList），可以保证我们的程序的安全而不会被恶意注入
 
 4、类加载过程
 
@@ -396,3 +431,47 @@ ClassLoader是用来动态加载class文件到内存中
 
 1. 执行类构造器方法的过程
        
+##**静态代码块、构造代码块、构造方法的执行顺序**
+
+```
+class Fu{
+    static {
+        System.out.println("父静态代码块");
+    }
+    {
+        System.out.println("父代码块");
+    }
+    public Fu(){
+        System.out.println("父构造函数");
+    }
+}
+
+class Zi extends Fu{
+    static {
+        System.out.println("子静态代码块");
+    }
+    {
+        System.out.println("子代码块");
+    }
+    public Zi(){
+        System.out.println("子构造函数");
+    }
+}
+
+public class Text{
+    public static void main(String[] args) {
+        Zi zi = new Zi();
+    }
+}
+```
+
+输出结果
+
+```
+父静态代码块
+子静态代码块
+父代码块
+父构造函数
+子代码块
+子构造函数
+```

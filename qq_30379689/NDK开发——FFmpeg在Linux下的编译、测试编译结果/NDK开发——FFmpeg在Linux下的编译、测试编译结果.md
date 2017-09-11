@@ -28,13 +28,25 @@ sudo apt-get install vim-gtk
 vim基本使用
 
 * 命令模式
-    * i：进入编辑模式
+    * ctrl + f：上一页
+    * ctrl + b：下一页
     * x：删除
+    * p：粘贴
+    * u：撤销
+    * ctrl+r：恢复撤销
     * dd：删除行
+    * yy：复制行
+    * shift+:q!：强制退出
+    * shift+:w：存盘
+    * shift+:wq：存盘退出
+    * shift+zz：保存退出
+    * ？+ 文本：文本搜索
 * 编辑模式：
     * Esc：退出编辑模式
-    * shift+:q!：强制退出
-    * shift+zz：保存退出
+    * i：进入插入模式，光标前
+    * a：进入插入模式，光标后
+    * I：进入插入模式，行首
+    * A：进入插入模式，行末
 
 Vim配置
 
@@ -168,10 +180,11 @@ SLIB_INSTALL_NAME='$(SLIBNAME_WITH_MAJOR)'
 SLIB_INSTALL_LINKS='$(SLIBNAME)'
 ```
 
-进入ffmpeg目录，执行shell脚本，等几分钟ffmpeg就编译成功了
+进入ffmpeg目录，执行configure文件，然后执行shell脚本，等几分钟ffmpeg就编译成功了
 
 ```
 cd ffmpeg-2.6.9
+./configure --disable-yasm
 ./build_android.sh
 ```
 
@@ -294,3 +307,5 @@ target_link_libraries(native-lib
 7、运行程序，如果通过则表示so库加载成功，可以正常使用了
 
 ##源码下载
+
+[源码下载](http://download.csdn.net/download/qq_30379689/9964160)

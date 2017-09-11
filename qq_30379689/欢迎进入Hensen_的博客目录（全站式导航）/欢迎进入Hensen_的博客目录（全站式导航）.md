@@ -1,4 +1,4 @@
-[toc]
+>请点击左上角的"[+]"打开目录
 
 #**Android基础**
 
@@ -123,12 +123,13 @@
 ##基础入门
 * [NDK开发——Android Studio2.x配置NDK环境、运行HelloWord](http://blog.csdn.net/qq_30379689/article/details/77771659)
 * [NDK开发——JNI必须掌握的常用例子](http://blog.csdn.net/qq_30379689/article/details/77771564)
+* [NDK开发——Linux命令、Shell命令、MakeFile命令、gba命令](http://blog.csdn.net/qq_30379689/article/details/77930919)
 
 ##Fmod
 * [NDK开发——Android Studio+CMake实现QQ变声效果](http://blog.csdn.net/qq_30379689/article/details/77802485)
 
 ##FFmpeg
-* [NDK开发——FFmpeg在Linux下的编译并完成测试](http://blog.csdn.net/qq_30379689/article/details/77844815)
+* [NDK开发——FFmpeg在Linux下的编译、测试编译结果](http://blog.csdn.net/qq_30379689/article/details/77844815)
 
 ##开发汇总
 * [NDK开发——Android Studio中开发NDK遇到的错误问题与解决方案汇总](http://blog.csdn.net/qq_30379689/article/details/77782828)

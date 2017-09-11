@@ -54,6 +54,9 @@ android中的scheme是一种页面内跳转协议，通过定义自己的scheme�
 * App可以通过跳转到另一个App页面
 * 可以通过H5页面跳转页面
 
+8、Context、Activity、Application之间有什么区别
+
+Activity和Application都是Context的子类。Context从字面上理解就是上下文的意思，在实际应用中它也确实是起到了管理上下文环境中各个参数和变量的总用，方便我们可以简单的访问到各种资源。虽然Activity和Application都是Context的子类，但是他们维护的生命周期不一样。前者维护一个Acitivity的生命周期，所以其对应的Context也只能访问该activity内的各种资源。后者则是维护一个Application的生命周期
 
 #Fragment面试题
 
@@ -768,7 +771,7 @@ View的绘制帧数保持60fps是最佳，这要求每帧的绘制时间不超�
 2、类加载器（Java中字节码添加到虚拟机中）
 
 * DexClassLoader：能够加载未安装的jar/apk/dex，主要用于动态加载和代码热更新
-* PathClassLoader：只能加载系统中已经安装过的apk
+* PathClassLoader：加载/data/app目录下的apk文件，只要用来加载系统中已经安装过的apk
 
 
 #热更新面试题
